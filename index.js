@@ -29,6 +29,7 @@ app.post("/saveProject", async (req, res) => {
     const bgColor = req.body.bgColor;
     const textColor = req.body.textColor;
     const ascColor = req.body.ascColor;
+    const photoAlreadyUploaded = req.body.photoAlreadyUploaded;
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     // console.log(" all data in server ", req.body);
@@ -69,19 +70,37 @@ app.post("/saveProject", async (req, res) => {
         .eq("pNum", i);
 
       if (data.length > 0) {
-        console.log("ifff ")
-        await supabase
-        .from("projects")
-        .update({
-          pName: req.body.form[`pName${i}`],
-          pDesc: req.body.form[`pDesc${i}`],
-          pLink: req.body.form[`pLink${i}`],
-          pGithub: req.body.form[`pGithub${i}`],
-          imgID: allImgID[i-1],
-        })
-        .eq("email", decoded.email)
-        .eq("pNum", i);
-      } else {
+         if (photoAlreadyUploaded && allImgID.length == 0) {
+          // console.log("ifff ")
+          await supabase
+          .from("projects")
+          .update({
+            pName: req.body.form[`pName${i}`],
+            pDesc: req.body.form[`pDesc${i}`],
+            pLink: req.body.form[`pLink${i}`],
+            pGithub: req.body.form[`pGithub${i}`],
+            // imgID: allImgID[i-1],
+          })
+          .eq("email", decoded.email)
+          .eq("pNum", i);
+        }
+         else {
+          // console.log("ifff ")
+          await supabase
+          .from("projects")
+          .update({
+            pName: req.body.form[`pName${i}`],
+            pDesc: req.body.form[`pDesc${i}`],
+            pLink: req.body.form[`pLink${i}`],
+            pGithub: req.body.form[`pGithub${i}`],
+            imgID: allImgID[i-1],
+          })
+          .eq("email", decoded.email)
+          .eq("pNum", i);
+        }
+      }
+     
+      else {
           await supabase.from("projects").insert({
             email: decoded.email,
             pName: req.body.form[`pName${i}`],
